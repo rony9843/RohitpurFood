@@ -1,20 +1,18 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import { StatusBar } from "expo-status-bar";
+import { View } from "react-native";
+import BottomTabs from "./bottomTabsNavi";
+import RegisterScreen from "./screens/RegisterScreen";
 
 export default function App() {
+  const count = 1;
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={{ flex: 1 }}>
+      <NavigationContainer>
+        <StatusBar style="auto" />
+        {count === 1 ? <RegisterScreen /> : <BottomTabs />}
+      </NavigationContainer>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
