@@ -4,7 +4,7 @@ import SignInScreen from "./SignInScreen";
 import SingUpScreen from "./SingUpScreen";
 
 const RegisterScreen = () => {
-  const [signState, setSignState] = useState("Sign In");
+  const [signState, setSignState] = useState("Sign Up");
 
   return (
     <View style={styles.container}>
