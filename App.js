@@ -20,7 +20,7 @@ export default function App() {
         {pageState === "Welcome" ? (
           <WelcomeScreen setPageState={setPageState} />
         ) : pageState === "RegisterScreen" ? (
-          <RegisterScreen />
+          <RegisterScreen setPageState={setPageState} />
         ) : (
           <BottomTabs />
         )}

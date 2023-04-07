@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "RuhitpurFood",
-    "slug": "RuhitpurFood",
-    "version": "1.0.0",
+    "slug": "ruhitpurfood",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,24 +12,30 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout" : 0
+      "fallbackToCacheTimeout": 1
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "buildNumber": "1.0.0",
+      "buildNumber": "1.0.1",
       "supportsTablet": true
     },
     "android": {
-      "versionCode" : 1,
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.rony9843.ruhitpurfood"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b7b176d5-d2b5-4b3c-a515-cabb18d984df"
+      }
     }
   }
 }

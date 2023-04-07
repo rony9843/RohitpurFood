@@ -3,15 +3,15 @@ import { StyleSheet, View } from "react-native";
 import SignInScreen from "./SignInScreen";
 import SingUpScreen from "./SingUpScreen";
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ setPageState }) => {
   const [signState, setSignState] = useState("Sign Up");
 
   return (
     <View style={styles.container}>
       {signState === "Sign In" ? (
-        <SignInScreen setSignState={setSignState} />
+        <SignInScreen setPageState={setPageState} setSignState={setSignState} />
       ) : (
-        <SingUpScreen setSignState={setSignState} />
+        <SingUpScreen setPageState={setPageState} setSignState={setSignState} />
       )}
     </View>
   );

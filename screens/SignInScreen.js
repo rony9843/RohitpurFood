@@ -10,33 +10,95 @@ import {
   View,
 } from "react-native";
 
-const SignInScreen = ({ setSignState }) => {
-  const [info, setInfo] = useState([]);
+const SignInScreen = ({ setSignState, setPageState }) => {
+  const [userPhoneNumber, setUserPhoneNumber] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const inputHandler = (props) => {
-    console.log(` Name : ${props.name} , value : ${props.value} `);
-
-    setInfo([
-      ...info,
-      {
-        name: props.name,
-        value: props.value,
-      },
-    ]);
-  };
+  // ? error
+  const [error, setError] = useState({
+    state: false,
+    message: "",
+  });
 
   // ? post data from server
-  const postData = async (props) => {
-    fetch("https://ruhitpurebackend-production.up.railway.app/signUp", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(info),
-    });
+  const postData = async () => {
+    if (userPhoneNumber !== "" && userPassword !== "") {
+      setLoading(true);
+      const dataFind = await fetch(
+        `https://ruhitpurebackend-production.up.railway.app/logIn?phoneNumber=${userPhoneNumber}&password=${userPassword}`
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          return json;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
 
-    console.table(info);
+      setLoading(false);
+
+      console.log(dataFind.status);
+      console.log(dataFind);
+
+      if (dataFind.status === 404) {
+        setError({
+          state: true,
+          message: "Phone number not found",
+        });
+      } else if (dataFind.status === 403) {
+        setError({
+          state: true,
+          message: "Password doesn't match!!!",
+        });
+      } else {
+        setPageState("Landing Page");
+      }
+
+      //   fetch("https://ruhitpurebackend-production.up.railway.app/logIn", {
+      //     method: "POST",
+      //     headers: {
+      //       Accept: "application/json",
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       phoneNumber: userPhoneNumber,
+      //       password: userPassword,
+      //     }),
+      //   }).then((data) => {
+      //     setLoading(false);
+
+      //     console.log(data.status);
+
+      //     if (data.status === 404) {
+      //       setError({
+      //         state: true,
+      //         message: "Phone number not found",
+      //       });
+      //     } else if (data.status === 403) {
+      //       setError({
+      //         state: true,
+      //         message: "Password doesn't match!!!",
+      //       });
+      //     } else {
+      //       setPageState("Landing Page");
+      //     }
+      //   });
+    } else {
+      setError({
+        state: true,
+        message: "Please, Fill up the input box",
+      });
+    }
+
+    // fetch("http://localhost:8800/logIn", {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(info),
+    // });
   };
 
   /**
@@ -117,6 +179,8 @@ const SignInScreen = ({ setSignState }) => {
             placeholder="018********"
             placeholderTextColor="#2ABB59"
             style={styles.inputBox}
+            value={userPhoneNumber}
+            onChangeText={(e) => setUserPhoneNumber(e)}
           />
         </View>
 
@@ -127,8 +191,16 @@ const SignInScreen = ({ setSignState }) => {
             placeholderTextColor="#2ABB59"
             style={styles.inputBox}
             secureTextEntry={true}
+            value={userPassword}
+            onChangeText={(e) => setUserPassword(e)}
           />
         </View>
+
+        {error.state && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorTitle}>{error.message}</Text>
+          </View>
+        )}
 
         <View
           style={{
@@ -138,10 +210,13 @@ const SignInScreen = ({ setSignState }) => {
           }}
         >
           <Pressable
+            onPress={() => postData()}
             android_ripple={{ color: "#37EF73", borderless: false }}
             style={styles.signInBtnContainer}
           >
-            <Text style={styles.signInBtnTitle}>Log In</Text>
+            <Text style={styles.signInBtnTitle}>
+              {loading ? "Loading..." : "Log In"}
+            </Text>
           </Pressable>
         </View>
 
@@ -192,6 +267,16 @@ const styles = StyleSheet.create({
     color: "#1CAC4B",
     fontSize: 20,
     fontWeight: "bold",
+  },
+
+  errorContainer: {
+    marginTop: 20,
+    borderRadius: 12,
+    padding: 10,
+    backgroundColor: "#FF4949",
+  },
+  errorTitle: {
+    color: "#fff",
   },
 });
 

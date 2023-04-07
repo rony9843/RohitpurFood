@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   Pressable,
@@ -10,7 +10,118 @@ import {
   View,
 } from "react-native";
 
-const SingUpScreen = ({ setSignState }) => {
+const SingUpScreen = ({ setSignState, setPageState }) => {
+  const [userName, setUserName] = useState("");
+  const [userPrimaryPhoneNumber, setPrimaryPhoneNumber] = useState("");
+  const [userSecondaryPhoneNumber, setSecondaryPhoneNumber] = useState("");
+  const [userPassword, setPassword] = useState("");
+  const [userConfirmPass, setConfirmPass] = useState("");
+  const [userUnion, setUnion] = useState("");
+  const [userThana, setThana] = useState("");
+  const [userDistrict, setDistrict] = useState("");
+
+  // ? error state
+  const [error, setError] = useState({
+    state: false,
+    message: "",
+    issue: "",
+  });
+
+  // ? loading State
+  const [loading, setLoading] = useState(false);
+
+  // ? post data from server
+  const postData = () => {
+    // validation
+    if (userName === "") {
+      return setError({
+        state: true,
+        message: "Please, Enter your name",
+        issue: "name",
+      });
+    }
+
+    if (userPrimaryPhoneNumber === "") {
+      return setError({
+        state: true,
+        message: "Please, Enter Your Primary Phone Number",
+        issue: "Phone",
+      });
+    }
+    if (userPassword === "") {
+      return setError({
+        state: true,
+        message: "Please, Enter your password",
+        issue: "password",
+      });
+    }
+    if (userPassword !== userConfirmPass) {
+      return setError({
+        state: true,
+        message: "Password does not match!!!",
+        issue: "password",
+      });
+    }
+
+    if (userUnion === "") {
+      return setError({
+        state: true,
+        message: "Please, Enter Your Union Name",
+        issue: "Union",
+      });
+    }
+    if (userThana === "") {
+      return setError({
+        state: true,
+        message: "Please, Enter Your Thana Name",
+        issue: "Thana",
+      });
+    }
+    if (userDistrict === "") {
+      return setError({
+        state: true,
+        message: "Please, Enter Your District",
+        issue: "District",
+      });
+    }
+
+    setLoading(true);
+
+    const payloadData = {
+      name: userName,
+      primaryPhoneNumber: userPrimaryPhoneNumber,
+      SecondaryPhoneNumber:
+        userSecondaryPhoneNumber === "" ? null : userSecondaryPhoneNumber,
+      password: userPassword,
+      union: userUnion,
+      thana: userThana,
+      district: userDistrict,
+      userId: Math.floor(100000000 + Math.random() * 900000000),
+      createdTime: new Date(),
+    };
+
+    fetch("https://ruhitpurebackend-production.up.railway.app/signUp", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payloadData),
+    }).then((json) => {
+      if (json.status === 403) {
+        setLoading(false);
+        setError({
+          state: true,
+          message: "Phone number already exist!!!",
+          issue: "Phone",
+        });
+      } else {
+        setPageState("landingPage");
+        setLoading(false);
+      }
+    });
+  };
+
   return (
     <ScrollView
       style={{
@@ -55,7 +166,9 @@ const SingUpScreen = ({ setSignState }) => {
           <TextInput
             placeholder="Jubayth Hossen Roni"
             placeholderTextColor="#2ABB59"
-            style={styles.inputBox}
+            style={error.issue === "name" ? styles.issueBox : styles.inputBox}
+            value={userName}
+            onChangeText={(e) => setUserName(e)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -63,7 +176,9 @@ const SingUpScreen = ({ setSignState }) => {
           <TextInput
             placeholder="018*******"
             placeholderTextColor="#2ABB59"
-            style={styles.inputBox}
+            style={error.issue === "Phone" ? styles.issueBox : styles.inputBox}
+            value={userPrimaryPhoneNumber}
+            onChangeText={(e) => setPrimaryPhoneNumber(e)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -75,6 +190,8 @@ const SingUpScreen = ({ setSignState }) => {
             placeholder="018*******"
             placeholderTextColor="#2ABB59"
             style={styles.inputBox}
+            value={userSecondaryPhoneNumber}
+            onChangeText={(e) => setSecondaryPhoneNumber(e)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -82,8 +199,12 @@ const SingUpScreen = ({ setSignState }) => {
           <TextInput
             placeholder="********"
             placeholderTextColor="#2ABB59"
-            style={styles.inputBox}
+            style={
+              error.issue === "password" ? styles.issueBox : styles.inputBox
+            }
             secureTextEntry={true}
+            value={userPassword}
+            onChangeText={(e) => setPassword(e)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -92,7 +213,11 @@ const SingUpScreen = ({ setSignState }) => {
             placeholder="********"
             secureTextEntry={true}
             placeholderTextColor="#2ABB59"
-            style={styles.inputBox}
+            style={
+              error.issue === "password" ? styles.issueBox : styles.inputBox
+            }
+            value={userConfirmPass}
+            onChangeText={(e) => setConfirmPass(e)}
           />
         </View>
         <View
@@ -110,7 +235,9 @@ const SingUpScreen = ({ setSignState }) => {
           <TextInput
             placeholder="Ruhitpur"
             placeholderTextColor="#2ABB59"
-            style={styles.inputBox}
+            style={error.issue === "Union" ? styles.issueBox : styles.inputBox}
+            value={userUnion}
+            onChangeText={(e) => setUnion(e)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -118,7 +245,9 @@ const SingUpScreen = ({ setSignState }) => {
           <TextInput
             placeholder="Ruhitpur"
             placeholderTextColor="#2ABB59"
-            style={styles.inputBox}
+            style={error.issue === "Thana" ? styles.issueBox : styles.inputBox}
+            value={userThana}
+            onChangeText={(e) => setThana(e)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -126,9 +255,19 @@ const SingUpScreen = ({ setSignState }) => {
           <TextInput
             placeholder="Dhaka"
             placeholderTextColor="#2ABB59"
-            style={styles.inputBox}
+            style={
+              error.issue === "District" ? styles.issueBox : styles.inputBox
+            }
+            value={userDistrict}
+            onChangeText={(e) => setDistrict(e)}
           />
         </View>
+
+        {error.state && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorTitle}>{error.message}</Text>
+          </View>
+        )}
 
         <View
           style={{ borderRadius: 12, overflow: "hidden", alignItems: "center" }}
@@ -136,8 +275,11 @@ const SingUpScreen = ({ setSignState }) => {
           <Pressable
             android_ripple={{ color: "#37EF73", borderless: false }}
             style={styles.signInBtnContainer}
+            onPress={() => postData()}
           >
-            <Text style={styles.signInBtnTitle}>Sign Up</Text>
+            <Text style={styles.signInBtnTitle}>
+              {loading ? "Loading..." : "Sign Up"}
+            </Text>
           </Pressable>
         </View>
 
@@ -168,6 +310,16 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
+
+  issueBox: {
+    backgroundColor: "#37EF73",
+    padding: 8,
+    marginTop: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "red",
+  },
+
   inputBox: {
     backgroundColor: "#37EF73",
     padding: 8,
@@ -186,6 +338,15 @@ const styles = StyleSheet.create({
     color: "#1CAC4B",
     fontSize: 20,
     fontWeight: "bold",
+  },
+  errorContainer: {
+    marginTop: 20,
+    borderRadius: 12,
+    padding: 10,
+    backgroundColor: "#FF4949",
+  },
+  errorTitle: {
+    color: "#fff",
   },
 });
 
