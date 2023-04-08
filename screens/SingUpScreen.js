@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Image,
   Pressable,
@@ -9,8 +9,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { UserInfoContext } from "../App";
+import setUserInfo from "../service/setUserInfoService";
 
 const SingUpScreen = ({ setSignState, setPageState }) => {
+  // use context
+  const [loggingUserInfo, setLoginUserInfo] = useContext(UserInfoContext);
+
   const [userName, setUserName] = useState("");
   const [userPrimaryPhoneNumber, setPrimaryPhoneNumber] = useState("");
   const [userSecondaryPhoneNumber, setSecondaryPhoneNumber] = useState("");
@@ -19,6 +24,10 @@ const SingUpScreen = ({ setSignState, setPageState }) => {
   const [userUnion, setUnion] = useState("");
   const [userThana, setThana] = useState("");
   const [userDistrict, setDistrict] = useState("");
+
+  const userIdGen = Math.floor(100000000 + Math.random() * 900000000);
+
+  const [userCreateATime, setUserCreateATime] = useState(new Date());
 
   // ? error state
   const [error, setError] = useState({
@@ -96,8 +105,8 @@ const SingUpScreen = ({ setSignState, setPageState }) => {
       union: userUnion,
       thana: userThana,
       district: userDistrict,
-      userId: Math.floor(100000000 + Math.random() * 900000000),
-      createdTime: new Date(),
+      userId: userIdGen,
+      createdTime: userCreateATime,
     };
 
     fetch("https://ruhitpurebackend-production.up.railway.app/signUp", {
@@ -116,9 +125,50 @@ const SingUpScreen = ({ setSignState, setPageState }) => {
           issue: "Phone",
         });
       } else {
+        setLoginUserInfo({
+          name: userName,
+          primaryPhoneNumber: userPrimaryPhoneNumber,
+          SecondaryPhoneNumber: userSecondaryPhoneNumber,
+          _id: "",
+          password: userPassword,
+          thana: userThana,
+          union: userUnion,
+          userId: userIdGen,
+          district: userDistrict,
+          createdTime: userCreateATime,
+        });
+
+        setUserFunction({
+          name: userName,
+          primaryPhoneNumber: userPrimaryPhoneNumber,
+          SecondaryPhoneNumber: userSecondaryPhoneNumber,
+          _id: "",
+          password: userPassword,
+          thana: userThana,
+          union: userUnion,
+          userId: userIdGen,
+          district: userDistrict,
+          createdTime: userCreateATime,
+        });
+
         setPageState("landingPage");
         setLoading(false);
       }
+    });
+  };
+
+  const setUserFunction = async (props) => {
+    await setUserInfo({
+      name: props.name,
+      primaryPhoneNumber: props.primaryPhoneNumber,
+      SecondaryPhoneNumber: props.SecondaryPhoneNumber,
+      _id: "",
+      password: props.password,
+      thana: props.thana,
+      union: props.union,
+      userId: props.userId,
+      district: props.district,
+      createdTime: props.createdTime,
     });
   };
 

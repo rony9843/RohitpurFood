@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Image,
   Pressable,
@@ -9,8 +9,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { UserInfoContext } from "../App";
+import setUserInfo from "../service/setUserInfoService";
 
 const SignInScreen = ({ setSignState, setPageState }) => {
+  // use context
+  const [loggingUserInfo, setLoginUserInfo] = useContext(UserInfoContext);
+
   const [userPhoneNumber, setUserPhoneNumber] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,81 +57,56 @@ const SignInScreen = ({ setSignState, setPageState }) => {
           message: "Password doesn't match!!!",
         });
       } else {
+        setLoginUserInfo({
+          name: dataFind.user.name,
+          primaryPhoneNumber: dataFind.user.primaryPhoneNumber,
+          SecondaryPhoneNumber: dataFind.user.SecondaryPhoneNumber,
+          _id: dataFind.user._id,
+          password: dataFind.user.password,
+          thana: dataFind.user.thana,
+          union: dataFind.user.union,
+          userId: dataFind.user.userId,
+          district: dataFind.user.district,
+          createdTime: dataFind.user.createdTime,
+        });
+
+        setUserFunction({
+          name: dataFind.user.name,
+          primaryPhoneNumber: dataFind.user.primaryPhoneNumber,
+          SecondaryPhoneNumber: dataFind.user.SecondaryPhoneNumber,
+          _id: dataFind.user._id,
+          password: dataFind.user.password,
+          thana: dataFind.user.thana,
+          union: dataFind.user.union,
+          userId: dataFind.user.userId,
+          district: dataFind.user.district,
+          createdTime: dataFind.user.createdTime,
+        });
+
         setPageState("Landing Page");
       }
-
-      //   fetch("https://ruhitpurebackend-production.up.railway.app/logIn", {
-      //     method: "POST",
-      //     headers: {
-      //       Accept: "application/json",
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({
-      //       phoneNumber: userPhoneNumber,
-      //       password: userPassword,
-      //     }),
-      //   }).then((data) => {
-      //     setLoading(false);
-
-      //     console.log(data.status);
-
-      //     if (data.status === 404) {
-      //       setError({
-      //         state: true,
-      //         message: "Phone number not found",
-      //       });
-      //     } else if (data.status === 403) {
-      //       setError({
-      //         state: true,
-      //         message: "Password doesn't match!!!",
-      //       });
-      //     } else {
-      //       setPageState("Landing Page");
-      //     }
-      //   });
     } else {
       setError({
         state: true,
         message: "Please, Fill up the input box",
       });
     }
-
-    // fetch("http://localhost:8800/logIn", {
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(info),
-    // });
   };
 
-  /**
-   *   <View>
-        <Text>Name</Text>
-        <TextInput
-          name="name"
-          onChangeText={(e) => inputHandler({ value: e, name: "name" })}
-          placeholder="Jubayth Hossen Roni"
-        />
-      </View>
-
-      <TouchableOpacity>
-        <Button onPress={() => postData()} title="click meeee" />
-      </TouchableOpacity>
-
-      <Text>
-        If you don't have an account please{" "}
-        <Text
-          onPress={() => setSignState("Sign Up")}
-          style={{ fontWeight: "bold" }}
-        >
-          SIGN UP
-        </Text>
-      </Text>
-
-
-   */
+  const setUserFunction = async (props) => {
+    await setUserInfo({
+      name: props.name,
+      primaryPhoneNumber: props.primaryPhoneNumber,
+      SecondaryPhoneNumber: props.SecondaryPhoneNumber,
+      _id: props.__id,
+      password: props.password,
+      thana: props.thana,
+      union: props.union,
+      userId: props.userId,
+      district: props.district,
+      createdTime: props.createdTime,
+    });
+  };
 
   return (
     <ScrollView
