@@ -1,11 +1,12 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { UserInfoContext } from "../App";
 import HomeScreen from "../screens/HomeScreen";
 import OrderDetailsScreen from "../screens/OrderDetailsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import ShoppingCardScreen from "../screens/ShoppingCardScreen";
+import socket from "../socket";
 
 const Tab = createBottomTabNavigator();
 
@@ -13,7 +14,11 @@ const BottomTabs = () => {
   // use context
   const [loggingUserInfo, setLoginUserInfo] = useContext(UserInfoContext);
 
-  console.log("this is user context : ", loggingUserInfo);
+  // console.log("this is user context : ", loggingUserInfo);
+
+  useEffect(() => {
+    socket.emit("userInfo", loggingUserInfo);
+  }, []);
 
   return (
     <Tab.Navigator>
